@@ -1,653 +1,214 @@
-<!-- <!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Be My Girlfriend?</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GitHub Guide — Actions, Workflows, Jobs, Project Board, PRs, Issues, Pages</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: #121212;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 2.2rem;
-      margin: 20px;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    button {
-      padding: 12px 24px;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      max-width: 150px;
-    }
-
-    #yesBtn {
-      background-color: #4CAF50;
-      color: white;
-      box-shadow: 0 0 10px #4CAF50;
-    }
-
-    #yesBtn:hover {
-      transform: scale(1.1);
-    }
-
-    #noBtn {
-      background-color: #e53935;
-      color: white;
-      box-shadow: 0 0 10px #e53935;
-    }
-
-    .message {
-      margin-top: 30px;
-      font-size: 1.4rem;
-    }
-
-    .notification-status {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 0.9rem;
-      backdrop-filter: blur(10px);
-    }
-
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(2px, -2px); }
-      60% { transform: translate(-1px, 1px); }
-      80% { transform: translate(1px, -1px); }
-      100% { transform: translate(0); }
-    }
-
-    .heart {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      background: red;
-      transform: rotate(45deg);
-      animation: fall 3s linear infinite;
-      z-index: 9999;
-    }
-
-    .heart::before,
-    .heart::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: red;
-      border-radius: 50%;
-    }
-
-    .heart::before {
-      top: -10px;
-      left: 0;
-    }
-
-    .heart::after {
-      left: -10px;
-      top: 0;
-    }
-
-    @keyframes fall {
-      0% {
-        transform: rotate(45deg) translateY(0);
-        opacity: 1;
-      }
-      100% {
-        transform: rotate(45deg) translateY(100vh);
-        opacity: 0;
-      }
-    }
-
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.6rem;
-        padding: 0 20px;
-      }
-
-      button {
-        font-size: 1rem;
-        padding: 10px 18px;
-      }
-
-      .message {
-        font-size: 1.2rem;
-      }
-
-      .notification-status {
-        top: 10px;
-        right: 10px;
-        font-size: 0.8rem;
-        padding: 8px;
-      }
-    }
+    :root{--bg:#0f1724;--card:#0b1220;--muted:#9aa4b2;--accent:#7dd3fc;--glass:rgba(255,255,255,0.03)}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;color:#e6eef6;background:linear-gradient(180deg,#071022 0%, #081426 60%);-webkit-font-smoothing:antialiased}
+    .wrap{max-width:1000px;margin:36px auto;padding:28px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 6px 30px rgba(2,6,23,0.6)}
+    header{display:flex;align-items:center;gap:16px}
+    header h1{margin:0;font-size:20px}
+    header p{margin:0;color:var(--muted);font-size:13px}
+    nav{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+    .tab{background:var(--glass);padding:8px 12px;border-radius:10px;color:var(--accent);cursor:pointer;border:1px solid rgba(125,211,252,0.08);font-size:13px}
+    .tab.active{background:linear-gradient(90deg, rgba(125,211,252,0.06), rgba(125,211,252,0.02));color:#cff6ff}
+    main{margin-top:18px;display:grid;grid-template-columns:1fr 320px;gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .content h2{margin-top:0}
+    pre{background:#02111a;padding:12px;border-radius:8px;overflow:auto;color:#dff9ff;font-size:13px}
+    code{font-family:SFMono-Regular,Menlo,Monaco,Monospace;font-size:13px}
+    .aside h3{margin:6px 0 8px 0}
+    .mini{font-size:13px;color:var(--muted)}
+    .example-yaml{margin-top:12px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    button.copy{background:#07202c;border:1px solid rgba(255,255,255,0.03);color:var(--accent);padding:8px 10px;border-radius:8px;cursor:pointer}
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+    @media (max-width:880px){main{grid-template-columns:1fr;}.aside{order:2}}
+    .flow-diagram{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+    .step{background:#05121a;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);min-width:120px;text-align:center}
+    .green{color:#9ee7c6}
+    .muted{color:var(--muted)}
+    .search{width:100%;padding:10px;border-radius:10px;background:#051826;border:1px solid rgba(255,255,255,0.02);color:#cfeffb}
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>GitHub Guide</h1>
+        <p class="mini">A compact reference explaining Actions, Workflows, Jobs, Project Board, Pull Requests, Issues, and GitHub Pages.</p>
+      </div>
+    </header>
 
-  <div class="notification-status" id="notificationStatus">
-    Notifications: Checking...
+    <nav id="nav">
+      <div class="tab active" data-target="actions">GitHub Actions</div>
+      <div class="tab" data-target="workflows">Workflows</div>
+      <div class="tab" data-target="jobs">Jobs</div>
+      <div class="tab" data-target="project">Project Board</div>
+      <div class="tab" data-target="pr">Pull Requests</div>
+      <div class="tab" data-target="issues">Issues</div>
+      <div class="tab" data-target="pages">GitHub Pages</div>
+    </nav>
+
+    <main>
+      <section class="card content" id="content">
+
+        <article id="actions" class="panel">
+          <h2>GitHub Actions</h2>
+          <p class="muted">GitHub Actions is an automation platform built into GitHub that runs tasks in response to events in your repository. Think of it as a set of programmable triggers and runners that help with continuous integration, continuous delivery, maintenance tasks, and automation.</p>
+          <p>Actions can be single-purpose small programs you reuse, or they can be whole scripts you write inside a workflow file. Common uses include running tests, building artifacts, and deploying applications.</p>
+          <div class="flow-diagram">
+            <div class="step">Event occurs</div>
+            <div class="step">Workflow file matches</div>
+            <div class="step">Jobs run on runners</div>
+            <div class="step green">Checks & results</div>
+          </div>
+
+          <div class="example-yaml">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>Example: Python CI (short)</strong>
+              <div class="controls"><button class="copy" data-copy="#pyci">Copy</button></div>
+            </div>
+            <pre id="pyci"><code># .github/workflows/python-ci.yml
+name: Python CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: python -m pip install --upgrade pip
+      - run: if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - run: pytest
+</code></pre>
+          </div>
+        </article>
+
+        <article id="workflows" class="panel" style="display:none">
+          <h2>Workflows</h2>
+          <p class="muted">A workflow is the YAML file you place under .github/workflows. It describes the events that trigger automation, and it lists jobs and steps that will run in response.</p>
+          <p>Workflows are durable and versioned with your code. You can have many workflows per repository, each serving a different purpose such as running linters, building releases, or publishing pages.</p>
+          <p>Workflows are declarative. You specify triggers and the desired sequence of work and GitHub handles provisioning runners and showing logs.</p>
+        </article>
+
+        <article id="jobs" class="panel" style="display:none">
+          <h2>Jobs</h2>
+          <p class="muted">A job groups steps that run together on the same runner. Each job runs in an isolated virtual environment and has its own workspace. Jobs run in parallel unless you declare dependencies with the needs keyword.</p>
+          <p>Jobs are where environment choices are made: the operating system, the CPU, and access to secrets. Outputs from jobs can be passed to dependent jobs.</p>
+
+          <div style="margin-top:12px">
+            <strong>Quick example</strong>
+            <pre><code>jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - run: ./deploy.sh
+</code></pre>
+          </div>
+        </article>
+
+        <article id="project" class="panel" style="display:none">
+          <h2>Project Board</h2>
+          <p class="muted">The Project Board is a flexible planning space inside GitHub where you manage work using notes, issues, pull requests, and automation. It can act like a kanban board with columns for planned, in progress, and done.</p>
+          <p>Project boards help you track status across repositories. You can automate common actions so that moving an issue to a column triggers labels or updates to linked pull requests.</p>
+        </article>
+
+        <article id="pr" class="panel" style="display:none">
+          <h2>Pull Requests</h2>
+          <p class="muted">A pull request is the GitHub mechanism for proposing changes to a repository. It shows diffs, allows review comments, and can be connected to checks and CI workflows. Merge rules can require passing checks and approvals before changes are merged.</p>
+          <p>Use pull requests to discuss design decisions, review code, and run automated tests. They are the core collaboration feature for teams using Git.</p>
+        </article>
+
+        <article id="issues" class="panel" style="display:none">
+          <h2>Issues</h2>
+          <p class="muted">Issues track tasks, bugs, and feature requests. An issue can be assigned to people, labeled, and linked to pull requests. They are the canonical place to capture work and discussion outside of code changes.</p>
+          <p>Use issue templates to standardize bug reports and feature requests. Close issues automatically by referencing them in a pull request message with keywords like "Closes #123".</p>
+        </article>
+
+        <article id="pages" class="panel" style="display:none">
+          <h2>GitHub Pages</h2>
+          <p class="muted">GitHub Pages is a hosting service for static websites directly from a repository. You can publish documentation, portfolios, or project pages by pushing HTML, CSS, and JavaScript into a specific branch or directory and enabling Pages in the repository settings.</p>
+          <p>Pages integrates with Actions if you want to build and publish a static site automatically after each push. The site then becomes available at a github.io domain or a custom domain you configure.</p>
+        </article>
+
+      </section>
+
+      <aside class="card aside">
+        <h3>Quick actions</h3>
+        <p class="mini">Jump to a topic using the tabs above or use keyboard shortcuts. Click the copy button to copy example snippets to your clipboard.</p>
+
+        <h3>Search</h3>
+        <input class="search" id="search" placeholder="Search the guide (type a word)" />
+
+        <h3 style="margin-top:12px">Cheat sheet</h3>
+        <p class="mini">Actions are automation. Workflows are files. Jobs are grouped steps. Pull requests propose changes. Issues capture work. Project boards organize tasks. Pages serve static sites.</p>
+
+        <h3 style="margin-top:12px">Tips</h3>
+        <p class="mini">Use branch rules and required checks to protect main. Store secrets in repository settings, not in code. Keep workflows small and focused. Reuse community actions when appropriate.</p>
+      </aside>
+    </main>
+
+    <footer class="mini">Made for you. Edit, reuse, or publish this page as a GitHub Pages site.</footer>
   </div>
-
-  <h1 id="question">Will you be my girlfriend?</h1>
-
-  <div class="buttons">
-    <button id="yesBtn">Yes</button>
-    <button id="noBtn">No</button>
-  </div>
-
-  <div class="message" id="message"></div>
 
   <script>
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const question = document.getElementById('question');
-    const message = document.getElementById('message');
-    const notificationStatus = document.getElementById('notificationStatus');
-    let noClicks = 0;
-    let notificationsEnabled = false;
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.panel');
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      const target = t.dataset.target;
+      panels.forEach(p => { p.style.display = (p.id === target) ? 'block' : 'none'; });
+      window.location.hash = target;
+    }));
 
-    // Request notification permission on page load
-    async function requestNotificationPermission() {
-      if (!("Notification" in window)) {
-        notificationStatus.textContent = "Notifications: Not supported";
-        return false;
-      }
-
-      if (Notification.permission === "granted") {
-        notificationsEnabled = true;
-        notificationStatus.textContent = "Notifications: Enabled ✅";
-        return true;
-      }
-
-      if (Notification.permission !== "denied") {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          notificationsEnabled = true;
-          notificationStatus.textContent = "Notifications: Enabled ✅";
-          return true;
-        }
-      }
-
-      notificationStatus.textContent = "Notifications: Disabled ❌";
-      return false;
+    // Load from hash
+    const hash = window.location.hash.replace('#','');
+    if(hash){
+      const targetTab = document.querySelector('.tab[data-target="'+hash+'"]');
+      if(targetTab) targetTab.click();
     }
 
-    function sendNotification(title, body, icon = "💕") {
-      if (!notificationsEnabled) return;
-
-      try {
-        new Notification(title, {
-          body: body,
-          icon: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${icon}</text></svg>`,
-          badge: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💕</text></svg>`
+    // Copy to clipboard
+    document.querySelectorAll('button.copy').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sel = document.querySelector(btn.dataset.copy);
+        if(!sel) return;
+        navigator.clipboard.writeText(sel.innerText).then(() => {
+          btn.innerText = 'Copied';
+          setTimeout(()=>btn.innerText='Copy',1200);
         });
-      } catch (error) {
-        console.log("Notification error:", error);
-      }
-    }
-
-    // Initialize notifications
-    requestNotificationPermission();
-
-    yesBtn.addEventListener('click', () => {
-      yesBtn.remove();
-      noBtn.remove();
-      question.textContent = "";
-      message.textContent = "Awww 😍 See you Friday!";
-      heartEffect();
-      
-      sendNotification(
-        "YES! 🎉", 
-        "She said yes! Date scheduled for Friday! 💕",
-        "🎉"
-      );
+      });
     });
 
-    noBtn.addEventListener('click', () => {
-      noClicks++;
-
-      if (noClicks === 1) {
-        question.textContent = "Please...? 😥";
-        sendNotification(
-          "First rejection 😢", 
-          "She clicked no... but we're not giving up!",
-          "😢"
-        );
-      } else if (noClicks === 2) {
-        moveButtonRandomly(noBtn);
-        sendNotification(
-          "Still trying! 🏃‍♂️", 
-          "The no button is now running away!",
-          "🏃‍♂️"
-        );
-      } else if (noClicks === 3) {
-        question.textContent = "Please... 🥺";
-        moveButtonRandomly(noBtn);
-        sendNotification(
-          "Persistence mode activated! 🥺", 
-          "Puppy dog eyes are now in effect...",
-          "🥺"
-        );
-      } else if (noClicks === 4) {
-        document.body.style.animation = 'glitch 0.3s infinite';
-        question.textContent = "System Error... Accepting is mandatory 😵";
-        sendNotification(
-          "SYSTEM ERROR! 🚨", 
-          "The matrix is glitching! Resistance is futile!",
-          "🚨"
-        );
-      } else {
-        noBtn.remove();
-        question.textContent = "Only one choice remains 😈";
-        sendNotification(
-          "No choice left! 😈", 
-          "The no button has been eliminated. Choose wisely...",
-          "😈"
-        );
-      }
+    // Simple search highlight
+    const search = document.getElementById('search');
+    search.addEventListener('input', ()=>{
+      const q = search.value.trim().toLowerCase();
+      panels.forEach(p=>{
+        const text = p.innerText.toLowerCase();
+        p.style.display = q && !text.includes(q) ? 'none' : 'block';
+      });
+      // hide aside on small screens when searching
+      if(window.innerWidth<880) document.querySelector('.aside').style.display = q ? 'none' : 'block';
     });
-
-    function moveButtonRandomly(button) {
-      const btnWidth = button.offsetWidth;
-      const btnHeight = button.offsetHeight;
-      const x = Math.random() * (window.innerWidth - btnWidth - 20);
-      const y = Math.random() * (window.innerHeight - btnHeight - 20);
-      button.style.position = 'absolute';
-      button.style.left = `${x}px`;
-      button.style.top = `${y}px`;
-    }
-
-    function heartEffect() {
-      setInterval(() => {
-        const heart = document.createElement('div');
-        heart.classList.add('heart');
-        heart.style.left = Math.random() * window.innerWidth + 'px';
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 5000);
-      }, 100);
-    }
-
-    // Send a welcome notification after a short delay
-    setTimeout(() => {
-      if (notificationsEnabled) {
-        sendNotification(
-          "Welcome! 💕", 
-          "Ready to answer the most important question?",
-          "💕"
-        );
-      }
-    }, 2000);
   </script>
-
-  <footer>
-    <h5>Powered by Jay ©️ 2025</h5>
-  </footer>
-</body>
-</html> -->
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Be My Girlfriend?</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: #121212;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 2.2rem;
-      margin: 20px;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    button {
-      padding: 12px 24px;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      max-width: 150px;
-    }
-
-    #yesBtn {
-      background-color: #4CAF50;
-      color: white;
-      box-shadow: 0 0 10px #4CAF50;
-    }
-
-    #yesBtn:hover {
-      transform: scale(1.1);
-    }
-
-    #noBtn {
-      background-color: #e53935;
-      color: white;
-      box-shadow: 0 0 10px #e53935;
-    }
-
-    .message {
-      margin-top: 30px;
-      font-size: 1.4rem;
-    }
-
-    .notification-status {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 0.9rem;
-      backdrop-filter: blur(10px);
-    }
-
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(2px, -2px); }
-      60% { transform: translate(-1px, 1px); }
-      80% { transform: translate(1px, -1px); }
-      100% { transform: translate(0); }
-    }
-
-    .heart {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      background: red;
-      transform: rotate(45deg);
-      animation: fall 3s linear infinite;
-      z-index: 9999;
-    }
-
-    .heart::before,
-    .heart::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: red;
-      border-radius: 50%;
-    }
-
-    .heart::before {
-      top: -10px;
-      left: 0;
-    }
-
-    .heart::after {
-      left: -10px;
-      top: 0;
-    }
-
-    @keyframes fall {
-      0% {
-        transform: rotate(45deg) translateY(0);
-        opacity: 1;
-      }
-      100% {
-        transform: rotate(45deg) translateY(100vh);
-        opacity: 0;
-      }
-    }
-
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.6rem;
-        padding: 0 20px;
-      }
-
-      button {
-        font-size: 1rem;
-        padding: 10px 18px;
-      }
-
-      .message {
-        font-size: 1.2rem;
-      }
-
-      .notification-status {
-        top: 10px;
-        right: 10px;
-        font-size: 0.8rem;
-        padding: 8px;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="notification-status" id="notificationStatus">
-    Notifications: Checking...
-  </div>
-
-  <h1 id="question">Will you be my girlfriend?</h1>
-
-  <div class="buttons">
-    <button id="yesBtn">Yes</button>
-    <button id="noBtn">No</button>
-  </div>
-
-  <div class="message" id="message"></div>
-
-  <script>
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const question = document.getElementById('question');
-    const message = document.getElementById('message');
-    const notificationStatus = document.getElementById('notificationStatus');
-    let noClicks = 0;
-    let notificationsEnabled = false;
-
-    // Request notification permission on page load
-    async function requestNotificationPermission() {
-      if (!("Notification" in window)) {
-        notificationStatus.textContent = "Notifications: Not supported";
-        return false;
-      }
-
-      if (Notification.permission === "granted") {
-        notificationsEnabled = true;
-        notificationStatus.textContent = "Notifications: Enabled ✅";
-        return true;
-      }
-
-      if (Notification.permission !== "denied") {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          notificationsEnabled = true;
-          notificationStatus.textContent = "Notifications: Enabled ✅";
-          return true;
-        }
-      }
-
-      notificationStatus.textContent = "Notifications: Disabled ❌";
-      return false;
-    }
-
-    function sendWhatsAppMessage(message) {
-      const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
-      window.open(whatsappUrl, '_blank');
-    }
-
-    function sendNotification(title, body, whatsappMessage, icon = "💕") {
-      // Send WhatsApp message
-      if (whatsappMessage) {
-        sendWhatsAppMessage(whatsappMessage);
-      }
-
-      // Also show browser notification if enabled
-      if (!notificationsEnabled) return;
-
-      try {
-        new Notification(title, {
-          body: body,
-          icon: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${icon}</text></svg>`,
-          badge: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💕</text></svg>`
-        });
-      } catch (error) {
-        console.log("Notification error:", error);
-      }
-    }
-
-    // Initialize notifications
-    requestNotificationPermission();
-
-    yesBtn.addEventListener('click', () => {
-      yesBtn.remove();
-      noBtn.remove();
-      question.textContent = "";
-      message.textContent = "Awww 😍 See you Friday!";
-      heartEffect();
-      
-      sendNotification(
-        "YES! 🎉", 
-        "She said yes! Date scheduled for Friday! 💕",
-        "🎉 GUESS WHAT?! I just said YES to being your girlfriend! 😍💕 See you Friday for our first date! Can't wait! 💖✨",
-        "🎉"
-      );
-    });
-
-    noBtn.addEventListener('click', () => {
-      noClicks++;
-
-      if (noClicks === 1) {
-        question.textContent = "Please...? 😥";
-        sendNotification(
-          "First rejection 😢", 
-          "She clicked no... but we're not giving up!",
-          "Umm... I just clicked 'No' on your girlfriend request 😅 But don't worry, you're being very persistent! 😂",
-          "😢"
-        );
-      } else if (noClicks === 2) {
-        moveButtonRandomly(noBtn);
-        sendNotification(
-          "Still trying! 🏃‍♂️", 
-          "The no button is now running away!",
-          "LOL! 😂 Your 'No' button just started running away from me! This is getting interesting... 🏃‍♀️💨",
-          "🏃‍♂️"
-        );
-      } else if (noClicks === 3) {
-        question.textContent = "Please... 🥺";
-        moveButtonRandomly(noBtn);
-        sendNotification(
-          "Persistence mode activated! 🥺", 
-          "Puppy dog eyes are now in effect...",
-          "Aww... now you're giving me the puppy dog eyes! 🥺💕 This is actually pretty cute... You're not giving up, are you? 😊",
-          "🥺"
-        );
-      } else if (noClicks === 4) {
-        document.body.style.animation = 'glitch 0.3s infinite';
-        question.textContent = "System Error... Accepting is mandatory 😵";
-        sendNotification(
-          "SYSTEM ERROR! 🚨", 
-          "The matrix is glitching! Resistance is futile!",
-          "WHOA! 🚨 Your page just went full Matrix mode and started glitching! 😵 It says 'resistance is futile' - you're really committed to this! 😂🤖",
-          "🚨"
-        );
-      } else {
-        noBtn.remove();
-        question.textContent = "Only one choice remains 😈";
-        sendNotification(
-          "No choice left! 😈", 
-          "The no button has been eliminated. Choose wisely...",
-          "OK you win! 😈 You literally made the 'No' button disappear! Now there's only one choice left... You're pretty clever! 😏💕",
-          "😈"
-        );
-      }
-    });
-
-    function moveButtonRandomly(button) {
-      const btnWidth = button.offsetWidth;
-      const btnHeight = button.offsetHeight;
-      const x = Math.random() * (window.innerWidth - btnWidth - 20);
-      const y = Math.random() * (window.innerHeight - btnHeight - 20);
-      button.style.position = 'absolute';
-      button.style.left = `${x}px`;
-      button.style.top = `${y}px`;
-    }
-
-    function heartEffect() {
-      setInterval(() => {
-        const heart = document.createElement('div');
-        heart.classList.add('heart');
-        heart.style.left = Math.random() * window.innerWidth + 'px';
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 5000);
-      }, 100);
-    }
-
-    // Send a welcome WhatsApp message after a short delay
-    setTimeout(() => {
-      if (window.location.search.includes('share=true')) {
-        sendWhatsAppMessage("Hey! Someone just sent me this super cute 'Will you be my girlfriend?' page! 💕 Want to see how I respond? 😊✨");
-      }
-    }, 2000);
-  </script>
-
-  <footer>
-    <h5>Powered by Jay ©️ 2025</h5>
-  </footer>
 </body>
 </html>
